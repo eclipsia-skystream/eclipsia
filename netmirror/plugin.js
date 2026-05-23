@@ -1088,12 +1088,47 @@
                 "Referer": referer,
                 "Cookie": "hd=on"
             };
-            var streams = await expandNewTvHlsStreams(json.video_link, config.name, streamHeaders, referer);
-            var maxQuality = maxStreamQuality(streams);
-            var adaptiveLabel = maxQuality ? (config.name + " Auto [" + maxQuality + "p]") : (config.name + " Auto");
-            cb({ success: true, data: streams.concat([
-                buildDirectHlsStream(json.video_link, adaptiveLabel, maxQuality, streamHeaders)
-            ]) });
+            var streams = await expandNewTvHlsStreams(
+    json.video_link,
+    config.name,
+    streamHeaders,
+    referer
+);
+
+// Filter only 1080p & 2160p and only EN/HI
+streams = streams.filter(function (stream) {
+    var quality = Number(stream.quality || 0);
+    var lang = String(stream.language || "").toLowerCase();
+
+    var allowedQuality = quality === 1080 || quality === 2160;
+    var allowedLanguage = lang === "en" || lang === "hi";
+
+    return allowedQuality && allowedLanguage;
+});
+
+// Remove duplicate streams
+var seen = {};
+streams = streams.filter(function (stream) {
+    var key = [
+        stream.url,
+        stream.quality,
+        stream.language
+    ].join("|");
+
+    if (seen[key]) return false;
+    seen[key] = true;
+    return true;
+});
+
+// Sort: 2160 first, then 1080
+streams.sort(function (a, b) {
+    return Number(b.quality || 0) - Number(a.quality || 0);
+});
+
+cb({
+    success: true,
+    data: streams
+});
         } catch (e) {
             cb({ success: false, errorCode: "STREAMS_FAILED", message: String(e && e.message || e) });
         }
