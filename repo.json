@@ -4,6 +4,6 @@
   "description": "Curated Collection of Providers for Reliability",
   "manifestVersion": 3,
   "pluginLists": [
-    "https://codeberg.org/eclipsia/eclipsia-skystream/raw/branch/main/dist/plugins.json"
+    "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/plugins.json"
   ]
 }

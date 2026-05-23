@@ -1,0 +1,53 @@
+[
+  {
+    "packageName": "com.eclipsia.repo.netmirror",
+    "name": "NetMirror",
+    "version": 11,
+    "baseUrl": "https://net52.cc",
+    "providers": [
+      {
+        "id": "netflix",
+        "name": "Netflix"
+      },
+      {
+        "id": "prime",
+        "name": "Prime Video"
+      },
+      {
+        "id": "hotstar",
+        "name": "Hotstar"
+      },
+      {
+        "id": "disney",
+        "name": "Disney"
+      },
+      {
+        "id": "marvel",
+        "name": "Marvel"
+      },
+      {
+        "id": "starwars",
+        "name": "Star Wars"
+      },
+      {
+        "id": "pixar",
+        "name": "Pixar"
+      }
+    ],
+    "description": "NetMirror providers",
+    "authors": [
+      "Eclipsia"
+    ],
+    "languages": [
+      "en",
+      "hi",
+      "bn"
+    ],
+    "categories": [
+      "Movies",
+      "Series",
+      "Anime"
+    ],
+    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/com.eclipsia.repo.netmirror.sky"
+  }
+]
