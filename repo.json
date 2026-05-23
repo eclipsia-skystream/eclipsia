@@ -1,7 +1,7 @@
 {
   "name": "Eclipsia",
   "packageName": "com.eclipsia.repo",
-  "description": "Curated Collection of Providers for Reliability & Speed",
+  "description": "Curated Collection of Providers",
   "manifestVersion": 3,
   "pluginLists": [
     "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/plugins.json"
