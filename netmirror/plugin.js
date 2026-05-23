@@ -1100,17 +1100,17 @@
     .toLowerCase();
 
     // Keep only 1080p+
-    var allowedQuality = quality >= 1080;
+    var allowedQuality = quality >= 720;
 
     // Detect English
-    var isEnglish =
-        /\b(en|eng|english)\b/i.test(text);
+   // var isEnglish =
+    //    /\b(en|eng|english)\b/i.test(text);
 
     // Detect Hindi
-    var isHindi =
-        /\b(hi|hin|hindi)\b/i.test(text);
+//    var isHindi =
+  //      /\b(hi|hin|hindi)\b/i.test(text);
 
-    return allowedQuality && (isEnglish || isHindi);
+    return allowedQuality 
 });
 
 // Remove duplicates
