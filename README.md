@@ -8,7 +8,7 @@ A Curated Collection of Providers for SkyStream
 2. Go to **Settings → Manage Extensions**
 3. Add this repository URL:
    ```
-   https://codeberg.org/eclipsia/eclipsia-nuvio/raw/branch/main/manifest.json
+   https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/refs/heads/main/repo.json
    ```
 ## License
 
