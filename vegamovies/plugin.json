@@ -1,0 +1,20 @@
+{
+  "packageName": "com.eclipsia.repo.vegamovies",
+  "name": "VegaMovies",
+  "version": 84,
+  "baseUrl": "https://vegamovies.market",
+  "description": "VegaMovies with Nexdrive, G-Direct, FileBee, and V-Cloud.",
+  "authors": [
+    "Eclipsia"
+  ],
+  "languages": [
+    "hi",
+    "en",
+    "ja"
+  ],
+  "categories": [
+    "Movies",
+    "Series",
+    "Anime"
+  ]
+}
