@@ -1088,53 +1088,12 @@
                 "Referer": referer,
                 "Cookie": "hd=on"
             };
-            streams = streams.filter(function (stream) {
-    var quality = Number(stream.quality || 0);
-
-    var text = [
-        stream.language,
-        stream.languageName,
-        stream.source
-    ]
-    .join(" ")
-    .toLowerCase();
-
-    // Keep only 1080p+
-    var allowedQuality = quality >= 720;
-
-    // Detect English
-   // var isEnglish =
-    //    /\b(en|eng|english)\b/i.test(text);
-
-    // Detect Hindi
-//    var isHindi =
-  //      /\b(hi|hin|hindi)\b/i.test(text);
-
-    return allowedQuality 
-});
-
-// Remove duplicates
-var seen = {};
-
-streams = streams.filter(function (stream) {
-    var key = [
-        stream.url,
-        stream.quality,
-        stream.language,
-        stream.source
-    ].join("|");
-
-    if (seen[key]) return false;
-
-    seen[key] = true;
-    return true;
-});
-
-// Highest quality first
-streams.sort(function (a, b) {
-    return Number(b.quality || 0) -
-           Number(a.quality || 0);
-});
+            var streams = await expandNewTvHlsStreams(json.video_link, config.name, streamHeaders, referer);
+            var maxQuality = maxStreamQuality(streams);
+            var adaptiveLabel = maxQuality ? (config.name + " Auto [" + maxQuality + "p]") : (config.name + " Auto");
+            cb({ success: true, data: streams.concat([
+                buildDirectHlsStream(json.video_link, adaptiveLabel, maxQuality, streamHeaders)
+            ]) });
         } catch (e) {
             cb({ success: false, errorCode: "STREAMS_FAILED", message: String(e && e.message || e) });
         }
