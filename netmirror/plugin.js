@@ -1091,27 +1091,49 @@
             streams = streams.filter(function (stream) {
     var quality = Number(stream.quality || 0);
 
+    var text = [
+        stream.language,
+        stream.languageName,
+        stream.source
+    ]
+    .join(" ")
+    .toLowerCase();
+
     // Keep only 1080p+
-    if (quality < 1080) {
-        return false;
-    }
+    var allowedQuality = quality >= 1080;
 
-    var text = String(stream.source || "").toLowerCase();
+    // Detect English
+    var isEnglish =
+        /\b(en|eng|english)\b/i.test(text);
 
-    // If source has no language tag,
-    // keep it (many Hindi tracks are unlabeled)
-    var hasLanguageTag =
-        /\b(english|eng|en|hindi|hin|hi)\b/i.test(text);
+    // Detect Hindi
+    var isHindi =
+        /\b(hi|hin|hindi)\b/i.test(text);
 
-    if (!hasLanguageTag) {
-        return true;
-    }
+    return allowedQuality && (isEnglish || isHindi);
+});
 
-    // Keep only English/Hindi tagged streams
-    return (
-        /\b(english|eng|en)\b/i.test(text) ||
-        /\b(hindi|hin|hi)\b/i.test(text)
-    );
+// Remove duplicates
+var seen = {};
+
+streams = streams.filter(function (stream) {
+    var key = [
+        stream.url,
+        stream.quality,
+        stream.language,
+        stream.source
+    ].join("|");
+
+    if (seen[key]) return false;
+
+    seen[key] = true;
+    return true;
+});
+
+// Highest quality first
+streams.sort(function (a, b) {
+    return Number(b.quality || 0) -
+           Number(a.quality || 0);
 });
         } catch (e) {
             cb({ success: false, errorCode: "STREAMS_FAILED", message: String(e && e.message || e) });
