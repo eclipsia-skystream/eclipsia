@@ -613,15 +613,13 @@
         var audios = variant.attrs.AUDIO ? mediaByGroup(media, "AUDIO", variant.attrs.AUDIO) : [];
         if (!audios.length) {
             var subtitles = variant.attrs.SUBTITLES ? subtitlesFromMedia(media, variant.attrs.SUBTITLES, headers, referer) : [];
-            if (![1080, 2160].includes(quality)) return [];
-
-return [createHlsStream(
-    variant.url,
-    source + " [1080p]",
-    headers,
-    quality,
-    subtitles
-)];
+            return [createHlsStream(
+                variant.url,
+                quality ? (source + " [" + quality + "p]") : source,
+                headers,
+                quality,
+                subtitles
+            )];
         }
         var out = [];
         var usedLabels = {};
@@ -633,31 +631,15 @@ return [createHlsStream(
             var labelKey = languageName.toLowerCase();
             usedLabels[labelKey] = (usedLabels[labelKey] || 0) + 1;
             var displayName = usedLabels[labelKey] > 1 ? (languageName + " " + usedLabels[labelKey]) : languageName;
-            // only allow 1080p
-if (![1080, 2160].includes(quality)) return [];
-
-// reject streams without language metadata
-return [];
-
-// only allow english & hindi
-var allowed = ["en", "hi"];
-
-// normalize
-languageCode = String(languageCode || "")
-    .toLowerCase()
-    .split("-")[0];
-
-if (!allowed.includes(languageCode)) continue;
-
-out.push(createHlsStream(
-    buildVariantMiniMaster(variant, media, headers, referer, audio),
-    source + " " + displayName + " [1080p]",
-    headers,
-    quality,
-    [],
-    languageCode,
-    displayName
-));
+            out.push(createHlsStream(
+                buildVariantMiniMaster(variant, media, headers, referer, audio),
+                quality ? (source + " " + displayName + " [" + quality + "p]") : (source + " " + displayName),
+                headers,
+                quality,
+                [],
+                languageCode,
+                displayName
+            ));
         }
         return out.length ? out : [createHlsStream(
             buildVariantMiniMaster(variant, media, headers, referer),
@@ -1109,10 +1091,9 @@ out.push(createHlsStream(
             var streams = await expandNewTvHlsStreams(json.video_link, config.name, streamHeaders, referer);
             var maxQuality = maxStreamQuality(streams);
             var adaptiveLabel = maxQuality ? (config.name + " Auto [" + maxQuality + "p]") : (config.name + " Auto");
-            cb({
-    success: true,
-    data: streams
-});
+            cb({ success: true, data: streams.concat([
+                buildDirectHlsStream(json.video_link, adaptiveLabel, maxQuality, streamHeaders)
+            ]) });
         } catch (e) {
             cb({ success: false, errorCode: "STREAMS_FAILED", message: String(e && e.message || e) });
         }
