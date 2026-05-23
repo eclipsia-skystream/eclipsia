@@ -4,6 +4,6 @@
   "description": "Curated Collection of Providers for Reliability & Speed",
   "manifestVersion": 3,
   "pluginLists": [
-    "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/refs/heads/main/dist/plugins.json"
+    "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/plugins.json"
   ]
 }
