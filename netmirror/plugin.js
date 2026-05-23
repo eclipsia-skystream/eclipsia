@@ -613,13 +613,15 @@
         var audios = variant.attrs.AUDIO ? mediaByGroup(media, "AUDIO", variant.attrs.AUDIO) : [];
         if (!audios.length) {
             var subtitles = variant.attrs.SUBTITLES ? subtitlesFromMedia(media, variant.attrs.SUBTITLES, headers, referer) : [];
-            return [createHlsStream(
-                variant.url,
-                quality ? (source + " [" + quality + "p]") : source,
-                headers,
-                quality,
-                subtitles
-            )];
+            if (quality !== 1080  && quality !== 2160) return [];
+
+return [createHlsStream(
+    variant.url,
+    source + " [1080p]",
+    headers,
+    quality,
+    subtitles
+)];
         }
         var out = [];
         var usedLabels = {};
@@ -631,15 +633,22 @@
             var labelKey = languageName.toLowerCase();
             usedLabels[labelKey] = (usedLabels[labelKey] || 0) + 1;
             var displayName = usedLabels[labelKey] > 1 ? (languageName + " " + usedLabels[labelKey]) : languageName;
-            out.push(createHlsStream(
-                buildVariantMiniMaster(variant, media, headers, referer, audio),
-                quality ? (source + " " + displayName + " [" + quality + "p]") : (source + " " + displayName),
-                headers,
-                quality,
-                [],
-                languageCode,
-                displayName
-            ));
+            // only allow 1080p
+if (quality !== 1080  && quality !== 2160) continue;
+
+// only allow english & hindi
+var allowed = ["en", "hi"];
+if (allowed.indexOf(languageCode) === -1) continue;
+
+out.push(createHlsStream(
+    buildVariantMiniMaster(variant, media, headers, referer, audio),
+    source + " " + displayName + " [1080p]",
+    headers,
+    quality,
+    [],
+    languageCode,
+    displayName
+));
         }
         return out.length ? out : [createHlsStream(
             buildVariantMiniMaster(variant, media, headers, referer),
