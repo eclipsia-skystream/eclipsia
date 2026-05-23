@@ -1091,26 +1091,49 @@
             streams = streams.filter(function (stream) {
     var quality = Number(stream.quality || 0);
 
-    var lang = String(
-        stream.language ||
-        stream.languageName ||
-        ""
-    ).toLowerCase();
+    var text = [
+        stream.language,
+        stream.languageName,
+        stream.source
+    ]
+    .join(" ")
+    .toLowerCase();
 
-    var allowedQuality =
-        quality === 1080 ||
-        quality === 2160;
+    // Keep only 1080p+
+    var allowedQuality = quality >= 1080;
 
-    var allowedLanguage =
-        lang.includes("en") ||
-        lang.includes("eng") ||
-        lang.includes("english") ||
+    // Detect English
+    var isEnglish =
+        /\b(en|eng|english)\b/i.test(text);
 
-        lang.includes("hi") ||
-        lang.includes("hin") ||
-        lang.includes("hindi");
+    // Detect Hindi
+    var isHindi =
+        /\b(hi|hin|hindi)\b/i.test(text);
 
-    return allowedQuality && allowedLanguage;
+    return allowedQuality && (isEnglish || isHindi);
+});
+
+// Remove duplicates
+var seen = {};
+
+streams = streams.filter(function (stream) {
+    var key = [
+        stream.url,
+        stream.quality,
+        stream.language,
+        stream.source
+    ].join("|");
+
+    if (seen[key]) return false;
+
+    seen[key] = true;
+    return true;
+});
+
+// Highest quality first
+streams.sort(function (a, b) {
+    return Number(b.quality || 0) -
+           Number(a.quality || 0);
 });
         } catch (e) {
             cb({ success: false, errorCode: "STREAMS_FAILED", message: String(e && e.message || e) });
