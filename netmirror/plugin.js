@@ -101,7 +101,9 @@
         "Accept": "application/json, text/plain, */*"
     };
 
-   
+   var NEWTV_DOMAINS = [
+        "aHR0cHM6Ly9tdWxsdmFkLm5ldA=="
+    ];
 
     var cookieCache = { value: "", time: 0 };
     var resolvedApiUrl = "";
