@@ -2,7 +2,7 @@
   "packageName": "com.eclipsia.repo.netmirror",
   "name": "NetMirror",
   "version": 11,
-  "baseUrl": "https://net11.cc",
+  "baseUrl": "https://net52.cc",
   "providers": [
     {
       "id": "netflix",
