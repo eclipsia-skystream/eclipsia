@@ -585,7 +585,7 @@
         for (var i = 0; i < audios.length; i++) {
             var attrs = Object.assign({}, audios[i]);
             attrs.DEFAULT = "YES";
-            attrs.AUTOSELECT = "NO";
+            attrs.AUTOSELECT = "YES";
             lines.push(serializeMediaLine(attrs, attrs.URI));
         }
         lines.push(String(variant.raw || "").replace(/,?SUBTITLES="[^"]*"/i, ""));
