@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var MAIN_URL = "https://net52.cc";
+    var MAIN_URL = "https://net11.cc";
     var IMG_BASE = "https://imgcdn.kim";
     var COOKIE_TTL_MS = 54000000;
     var USER_AGENT = "Mozilla/5.0 (Linux; Android 13; Pixel 5 Build/TQ3A.230901.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/148.0.7778.179 Safari/537.36 /OS.Gatu v3.0";
@@ -101,8 +101,31 @@
         "Accept": "application/json, text/plain, */*"
     };
 
-   var NEWTV_DOMAINS = [
-        ""
+    var NEWTV_DOMAINS = [
+        "aHR0cHM6Ly9tb2JpbGVkZXRlY3RzLmNvbQ==",
+        "aHR0cHM6Ly9tb2JpbGVkZXRlY3QuYXBw",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LmFydA==",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LmNj",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LmNsaWNr",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0Lmluaw==",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LmxpdmU=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LnBybw==",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LnNob3A=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LnNpdGU=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LnNwYWNl",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LnN0b3Jl",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0LnZpcA==",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0Lndpa2k=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0Lnh5eg==",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy5hcnQ=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy5jYw==",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy5pbmZv",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy5pbms=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy5saXZl",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy5wcm8=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy5zdG9yZQ==",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy50b3A=",
+        "aHR0cHM6Ly9tb2JpZGV0ZWN0cy54eXo="
     ];
 
     var cookieCache = { value: "", time: 0 };
