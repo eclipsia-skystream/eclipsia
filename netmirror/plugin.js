@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var MAIN_URL = "https://net11.cc";
+    var MAIN_URL = "https://net52.cc";
     var IMG_BASE = "https://imgcdn.kim";
     var COOKIE_TTL_MS = 54000000;
     var USER_AGENT = "Mozilla/5.0 (Linux; Android 13; Pixel 5 Build/TQ3A.230901.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/148.0.7778.179 Safari/537.36 /OS.Gatu v3.0";
@@ -585,7 +585,7 @@
         for (var i = 0; i < audios.length; i++) {
             var attrs = Object.assign({}, audios[i]);
             attrs.DEFAULT = "YES";
-            attrs.AUTOSELECT = "YES";
+            attrs.AUTOSELECT = "NO";
             lines.push(serializeMediaLine(attrs, attrs.URI));
         }
         lines.push(String(variant.raw || "").replace(/,?SUBTITLES="[^"]*"/i, ""));
@@ -1091,9 +1091,9 @@
             var streams = await expandNewTvHlsStreams(json.video_link, config.name, streamHeaders, referer);
             var maxQuality = maxStreamQuality(streams);
             var adaptiveLabel = maxQuality ? (config.name + " Auto [" + maxQuality + "p]") : (config.name + " Auto");
-            cb({ success: true, data: [
+            cb({ success: true, data: streams.concat([
                 buildDirectHlsStream(json.video_link, adaptiveLabel, maxQuality, streamHeaders)
-            ] });
+            ]) });
         } catch (e) {
             cb({ success: false, errorCode: "STREAMS_FAILED", message: String(e && e.message || e) });
         }
