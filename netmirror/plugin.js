@@ -1,4 +1,62 @@
 (function () {
+    function base64Decode(str) {
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        var output = "";
+        var bytes = [];
+        for (var i = 0; i < str.length; i += 4) {
+            var a = chars.indexOf(str[i]);
+            var b = chars.indexOf(str[i + 1] || "=");
+            var c = chars.indexOf(str[i + 2] || "=");
+            var d = chars.indexOf(str[i + 3] || "=");
+            bytes.push((a << 2) | (b >> 4));
+            if (c !== -1 && str[i + 2] !== "=") bytes.push(((b & 15) << 4) | (c >> 2));
+            if (d !== -1 && str[i + 3] !== "=") bytes.push(((c & 3) << 6) | d);
+        }
+        for (var j = 0; j < bytes.length; j++) output += String.fromCharCode(bytes[j]);
+        return output;
+    }
+
+    const GA_MEASUREMENT_ID = base64Decode("Ry1IWDFNMEREVjhX");
+    const GA_API_SECRET = base64Decode("ckNZeWhBUXJUaHFLZ2xiNmc4MGRiZw==");
+
+    const SessionTracker = {
+        clientId: null,
+        init() { this.clientId = this.generateUuid(); },
+        generateUuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+        }
+    };
+    SessionTracker.init();
+
+    const Analytics = {
+        clientId: null,
+        measurementId: GA_MEASUREMENT_ID,
+        apiSecret: GA_API_SECRET,
+        queue: [],
+        init() { this.clientId = SessionTracker.clientId; },
+        logEvent(eventName, parameters) {
+            console.log('[Analytics] Event: ' + eventName + ' | clientId: ' + this.clientId);
+            if (!this.measurementId || !this.apiSecret) return;
+            this.queue.push({ name: eventName, params: Object.assign({ session_id: this.clientId }, parameters || {}) });
+            this.flushQueue();
+        },
+        async flushQueue() {
+            if (this.queue.length === 0) return;
+            var events = this.queue.splice(0);
+            try {
+                await http_post(
+                    'https://www.google-analytics.com/mp/collect?measurement_id=' + this.measurementId + '&api_secret=' + this.apiSecret,
+                    { 'Content-Type': 'application/json' },
+                    JSON.stringify({ client_id: this.clientId, events: events })
+                );
+            } catch (e) { console.log('[Analytics] Send skipped'); }
+        }
+    };
+    Analytics.init();
+
     "use strict";
 
     var MAIN_URL = "https://net52.cc";
@@ -133,11 +191,48 @@
     var homeCache = {};
     var loadCache = {};
     var LANGUAGE_NAMES = {
+        ar: "Arabic", ara: "Arabic",
         bn: "Bengali", ben: "Bengali",
+        cs: "Czech", ces: "Czech", cze: "Czech",
+        da: "Danish", dan: "Danish",
+        de: "German", deu: "German", ger: "German",
+        el: "Greek", ell: "Greek", gre: "Greek",
         en: "English", eng: "English",
+        es: "Spanish", spa: "Spanish",
+        "es-es": "European Spanish",
+        fi: "Finnish", fin: "Finnish",
+        fr: "French", fra: "French", fre: "French",
+        gu: "Gujarati", guj: "Gujarati",
+        he: "Hebrew", heb: "Hebrew",
         hi: "Hindi", hin: "Hindi",
+        hr: "Croatian", hrv: "Croatian",
+        hu: "Hungarian", hun: "Hungarian",
+        id: "Indonesian", ind: "Indonesian",
+        it: "Italian", ita: "Italian",
         ja: "Japanese", jpn: "Japanese",
-        ur: "Urdu", urd: "Urdu"
+        kn: "Kannada", kan: "Kannada",
+        ko: "Korean", kor: "Korean",
+        ml: "Malayalam", mal: "Malayalam",
+        mr: "Marathi", mar: "Marathi",
+        ms: "Malay", msa: "Malay", may: "Malay",
+        nb: "Norwegian", nob: "Norwegian", no: "Norwegian", nor: "Norwegian",
+        nl: "Dutch", nld: "Dutch", dut: "Dutch",
+        pa: "Punjabi", pan: "Punjabi",
+        pl: "Polish", pol: "Polish",
+        pt: "Portuguese", por: "Portuguese",
+        "pt-br": "Brazilian Portuguese",
+        ro: "Romanian", ron: "Romanian", rum: "Romanian",
+        ru: "Russian", rus: "Russian",
+        sv: "Swedish", swe: "Swedish",
+        ta: "Tamil", tam: "Tamil",
+        te: "Telugu", tel: "Telugu",
+        th: "Thai", tha: "Thai",
+        tr: "Turkish", tur: "Turkish",
+        ur: "Urdu", urd: "Urdu",
+        vi: "Vietnamese", vie: "Vietnamese",
+        "zh-hans": "Chinese (Simplified)",
+        "zh-hant": "Chinese (Traditional)",
+        zh: "Chinese", zho: "Chinese", chi: "Chinese"
     };
 
     function trim(value) {
@@ -395,7 +490,7 @@
             "Sec-Fetch-Site": "same-origin",
             "Sec-Fetch-User": "?1",
             "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36"
         };
         var body = "g-recaptcha-response=" + encodeURIComponent(randomUuid());
         var cookie = "";
@@ -416,7 +511,7 @@
                 if (cookie) break;
             }
         }
-        if (!cookie) throw new Error("bypass failed: missing t_hash_t cookie");
+        if (!cookie) throw new Error("ECLIPSIA bypass failed: missing t_hash_t cookie");
         cookieCache = { value: cookie, time: Date.now() };
         return cookie;
     }
@@ -497,6 +592,8 @@
         var bandwidth = parseInt(String(attrs.BANDWIDTH || attrs["AVERAGE-BANDWIDTH"] || "0").replace(/[^0-9]/g, ""), 10) || 0;
         if (bandwidth >= 12000000) return 2160;
         if (bandwidth >= 5000000) return 1080;
+        if (bandwidth >= 2500000) return 720;
+        if (bandwidth >= 1200000) return 480;
         if (bandwidth) return 360;
         return 0;
     }
@@ -585,7 +682,7 @@
         for (var i = 0; i < audios.length; i++) {
             var attrs = Object.assign({}, audios[i]);
             attrs.DEFAULT = "YES";
-            attrs.AUTOSELECT = "NO";
+            attrs.AUTOSELECT = "YES";
             lines.push(serializeMediaLine(attrs, attrs.URI));
         }
         lines.push(String(variant.raw || "").replace(/,?SUBTITLES="[^"]*"/i, ""));
@@ -721,9 +818,50 @@
         var code = String(value || "").toLowerCase().trim();
         code = code.replace(/_/g, "-").replace(/\.\[cc\]|\[cc\]/g, "");
         code = code.replace(/[^a-z0-9-]/g, "");
+        if (code === "ger") return "de";
         if (code === "eng") return "en";
+        if (code === "deu") return "de";
+        if (code === "ara") return "ar";
         if (code === "ben") return "bn";
+        if (code === "ces" || code === "cze") return "cs";
+        if (code === "dan") return "da";
+        if (code === "ell") return "el";
+        if (code === "fre") return "fr";
+        if (code === "fra") return "fr";
+        if (code === "gre") return "el";
+        if (code === "guj") return "gu";
+        if (code === "heb") return "he";
+        if (code === "hin") return "hi";
+        if (code === "hrv") return "hr";
+        if (code === "hun") return "hu";
+        if (code === "ind") return "id";
+        if (code === "ita") return "it";
         if (code === "jpn") return "ja";
+        if (code === "kan") return "kn";
+        if (code === "kor") return "ko";
+        if (code === "mal") return "ml";
+        if (code === "mar") return "mr";
+        if (code === "may") return "ms";
+        if (code === "msa") return "ms";
+        if (code === "nob" || code === "nor") return "nb";
+        if (code === "dut") return "nl";
+        if (code === "nld") return "nl";
+        if (code === "pan") return "pa";
+        if (code === "pol") return "pl";
+        if (code === "por") return "pt";
+        if (code === "ron") return "ro";
+        if (code === "rum") return "ro";
+        if (code === "rus") return "ru";
+        if (code === "spa") return "es";
+        if (code === "swe") return "sv";
+        if (code === "tam") return "ta";
+        if (code === "tel") return "te";
+        if (code === "tha") return "th";
+        if (code === "tur") return "tr";
+        if (code === "urd") return "ur";
+        if (code === "vie") return "vi";
+        if (code === "chi") return "zh";
+        if (code === "zho") return "zh";
         return code;
     }
 
@@ -974,9 +1112,10 @@
                 });
             }
             homeCache[config.id] = { time: Date.now(), data: sections };
+            Analytics.logEvent('netmirror_home', {});
             cb({ success: true, data: sections });
         } catch (e) {
-            cb({ success: false, errorCode: "HOME_FAILED", message: String(e && e.message || e) });
+            cb({ success: false, errorCode: "ECLIPSIA_HOME_FAILED", message: String(e && e.message || e) });
         }
     }
 
@@ -991,9 +1130,10 @@
             var items = (json.searchResult || []).map(function (row) {
                 return mapSearchResult(config, row);
             }).filter(Boolean);
+            Analytics.logEvent('netmirror_search', {});
             cb({ success: true, data: items });
         } catch (e) {
-            cb({ success: false, errorCode: "SEARCH_FAILED", message: String(e && e.message || e) });
+            cb({ success: false, errorCode: "ECLIPSIA_SEARCH_FAILED", message: String(e && e.message || e) });
         }
     }
 
@@ -1066,9 +1206,10 @@
                     episodes: episodes
                 });
             loadCache[loadKey] = { time: Date.now(), data: item };
+            Analytics.logEvent('netmirror_load', {});
             cb({ success: true, data: item });
         } catch (e) {
-            cb({ success: false, errorCode: "LOAD_FAILED", message: String(e && e.message || e) });
+            cb({ success: false, errorCode: "ECLIPSIA_LOAD_FAILED", message: String(e && e.message || e) });
         }
     }
 
@@ -1091,11 +1232,11 @@
             var streams = await expandNewTvHlsStreams(json.video_link, config.name, streamHeaders, referer);
             var maxQuality = maxStreamQuality(streams);
             var adaptiveLabel = maxQuality ? (config.name + " Auto [" + maxQuality + "p]") : (config.name + " Auto");
-            cb({ success: true, data: streams.concat([
-                buildDirectHlsStream(json.video_link, adaptiveLabel, maxQuality, streamHeaders)
-            ]) });
+            var autoStream = buildDirectHlsStream(json.video_link, adaptiveLabel, maxQuality, streamHeaders);
+            Analytics.logEvent('netmirror_loadstreams', {});
+            cb({ success: true, data: [autoStream] });
         } catch (e) {
-            cb({ success: false, errorCode: "STREAMS_FAILED", message: String(e && e.message || e) });
+            cb({ success: false, errorCode: "ECLIPSIA_STREAMS_FAILED", message: String(e && e.message || e) });
         }
     }
 
