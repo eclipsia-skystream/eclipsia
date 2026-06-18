@@ -1,0 +1,15 @@
+{
+  "packageName": "com.eclipsia.nuviobridge",
+  "name": "NuvioBridge",
+  "version": 3,
+  "baseUrl": "https://skystream-local",
+  "description": "NuvioBridge for Eclipsia",
+  "authors": ["Eclipsia"],
+  "languages": ["en", "hi", "bn"],
+  "categories": ["Movie", "TvSeries", "Anime"],
+  "nuvioManifests": [
+    
+    "https://codeberg.org/eclipsia/eclipsia-nuvio/raw/branch/main/manifest.json"
+    
+  ]
+}
