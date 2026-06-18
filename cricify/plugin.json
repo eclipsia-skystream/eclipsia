@@ -1,0 +1,11 @@
+{
+  "packageName": "dev.nivincnc.cncverse.cricfy",
+  "name": "Cricfy",
+  "version": 4,
+  "baseUrl": "https://cfymarkscanjiostar80.top",
+  "description": "Cricfy IPTV provider To Watch Live sports and TV channels",
+  "authors": ["NivinCNC"],
+  "languages": ["en", "hi", "ta"],
+  "categories": ["LiveTv"],
+  "providers": []
+}
