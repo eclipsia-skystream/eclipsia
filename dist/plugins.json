@@ -1,25 +1,5 @@
 [
   {
-    "packageName": "dev.nivincnc.cncverse.cricfy",
-    "name": "Cricfy",
-    "version": 4,
-    "baseUrl": "https://cfymarkscanjiostar80.top",
-    "description": "Cricfy IPTV provider To Watch Live sports and TV channels",
-    "authors": [
-      "NivinCNC"
-    ],
-    "languages": [
-      "en",
-      "hi",
-      "ta"
-    ],
-    "categories": [
-      "LiveTv"
-    ],
-    "providers": [],
-    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/dev.nivincnc.cncverse.cricfy.sky"
-  },
-  {
     "packageName": "com.eclipsia.repo.netmirror",
     "name": "NetMirror",
     "version": 11,
