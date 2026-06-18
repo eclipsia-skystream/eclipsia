@@ -1,5 +1,29 @@
 [
   {
+    "packageName": "com.eclipsia.nuviobridge",
+    "name": "NuvioBridge",
+    "version": 3,
+    "baseUrl": "https://skystream-local",
+    "description": "NuvioBridge for Eclipsia",
+    "authors": [
+      "Eclipsia"
+    ],
+    "languages": [
+      "en",
+      "hi",
+      "bn"
+    ],
+    "categories": [
+      "Movie",
+      "TvSeries",
+      "Anime"
+    ],
+    "nuvioManifests": [
+      "https://codeberg.org/eclipsia/eclipsia-nuvio/raw/branch/main/manifest.json"
+    ],
+    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/com.eclipsia.nuviobridge.sky"
+  },
+  {
     "packageName": "com.eclipsia.repo.netmirror",
     "name": "NetMirror",
     "version": 11,
