@@ -1,10 +1,8 @@
 (function() {
     var DEFAULT_API_BASE = "https://api.hlowb.com";
-    var PACKAGE_NAME = "com.eclipsia.castle";
-    var CHANNEL = "IndiaA";
+    var PACKAGE_NAME = "com.external.castle";
     var CLIENT_TYPE = "1";
     var LANG = "en-US";
-    var LOCATION_ID = "1001";
     var MODE = "1";
     var APP_MARKET = "GuanWang";
     var APK_SIGN_KEY = "ED0955EB04E67A1D9F3305B95454FED485261475";
@@ -21,6 +19,18 @@
     var SESSION_ANDROID_VERSION = ANDROID_VERSIONS[Math.floor(Math.random() * ANDROID_VERSIONS.length)];
     var SESSION_IS_NEW_USER = Math.random() < 0.5 ? "true" : "false";
     var SESSION_WOOL_USER = Math.random() < 0.5 ? "true" : "false";
+
+    // Privacy: randomize CHANNEL and LOCATION_ID per session to reduce
+    // geographic/regional fingerprinting across requests.
+    var CHANNELS = ["IndiaA", "IndiaB", "IndiaC"];
+    var LOCATION_IDS = ["1001", "1002", "1003", "1004"];
+    var SESSION_CHANNEL = CHANNELS[Math.floor(Math.random() * CHANNELS.length)];
+    var SESSION_LOCATION_ID = LOCATION_IDS[Math.floor(Math.random() * LOCATION_IDS.length)];
+
+    // Privacy: cache the security key for the session lifetime so we don't
+    // make a fingerprintable "key fetch -> content fetch" pair on every action.
+    var _securityKeyCache = null;
+    var _securityKeyFetching = null;
 
     // Privacy: jitter helper — adds a random delay between requests to break
     // timing-based fingerprinting of sequential fetch patterns.
@@ -45,8 +55,12 @@
 
     function toMessage(error) {
         if (!error) return "Unknown error";
-        if (typeof error === "string") return error;
-        return error.stack || error.message || String(error);
+        var msg = typeof error === "string" ? error : (error.message || String(error));
+        // Privacy: strip numeric IDs and URLs from error messages before surfacing them,
+        // so content access patterns are not leaked via error reporting.
+        return msg
+            .replace(/https?:\/\/[^\s)"]*/gi, "[url]")
+            .replace(/\d{4,}/g, "[id]");
     }
 
     function ensureString(value) {
@@ -257,13 +271,29 @@
     }
 
     async function getSecurityKey() {
-        var url = getApiBase() + "/v0.1/system/getSecurityKey/1?channel=" + CHANNEL + "&clientType=" + CLIENT_TYPE + "&lang=" + LANG;
-        var body = await httpGetText(url);
-        var payload = safeJsonParse(body);
-        if (payload && payload.code === 200 && payload.data) {
-            return payload.data;
-        }
-        return null;
+        // Privacy: return cached key to avoid a per-action key fetch that
+        // creates a correlated "key fetch -> content fetch" pattern on the server.
+        if (_securityKeyCache) return _securityKeyCache;
+
+        // Deduplicate concurrent fetches so only one real request is in flight at a time.
+        if (_securityKeyFetching) return _securityKeyFetching;
+
+        _securityKeyFetching = (async function() {
+            try {
+                var url = getApiBase() + "/v0.1/system/getSecurityKey/1?channel=" + SESSION_CHANNEL + "&clientType=" + CLIENT_TYPE + "&lang=" + LANG;
+                var body = await httpGetText(url);
+                var payload = safeJsonParse(body);
+                if (payload && payload.code === 200 && payload.data) {
+                    _securityKeyCache = payload.data;
+                    return _securityKeyCache;
+                }
+                return null;
+            } finally {
+                _securityKeyFetching = null;
+            }
+        })();
+
+        return _securityKeyFetching;
     }
 
     function getEncryptedPayload(body) {
@@ -379,7 +409,7 @@
 
     async function fetchMovieDetails(movieId) {
         var url = getApiBase()
-            + "/film-api/v1.9.9/movie?channel=" + CHANNEL
+            + "/film-api/v1.9.9/movie?channel=" + SESSION_CHANNEL
             + "&clientType=" + CLIENT_TYPE
             + "&lang=" + LANG
             + "&movieId=" + encodeURIComponent(movieId)
@@ -476,7 +506,7 @@
     }
 
     async function resolveVideoPayload(movieId, episodeId, languageId, resolution, securityKey) {
-        var url = getApiBase() + "/film-api/v2.0.1/movie/getVideo2?clientType=" + CLIENT_TYPE + "&packageName=" + PACKAGE_NAME + "&channel=" + CHANNEL + "&lang=" + LANG;
+        var url = getApiBase() + "/film-api/v2.0.1/movie/getVideo2?clientType=" + CLIENT_TYPE + "&packageName=" + PACKAGE_NAME + "&channel=" + SESSION_CHANNEL + "&lang=" + LANG;
 
         // Privacy: use session-randomized device fields instead of static identifiers
         var body = {
@@ -507,10 +537,10 @@
     async function getHome(cb) {
         try {
             var url = getApiBase()
-                + "/film-api/v0.1/category/home?channel=" + CHANNEL
+                + "/film-api/v0.1/category/home?channel=" + SESSION_CHANNEL
                 + "&clientType=" + CLIENT_TYPE
                 + "&lang=" + LANG
-                + "&locationId=" + LOCATION_ID
+                + "&locationId=" + SESSION_LOCATION_ID
                 + "&mode=" + MODE
                 + "&packageName=" + PACKAGE_NAME
                 + "&page=1&size=17";
@@ -565,7 +595,7 @@
 
             var encodedQuery = encodeURIComponent(query.trim());
             var url = getApiBase()
-                + "/film-api/v1.1.0/movie/searchByKeyword?channel=" + CHANNEL
+                + "/film-api/v1.1.0/movie/searchByKeyword?channel=" + SESSION_CHANNEL
                 + "&clientType=" + CLIENT_TYPE
                 + "&keyword=" + encodedQuery
                 + "&lang=" + LANG
