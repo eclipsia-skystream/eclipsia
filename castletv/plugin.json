@@ -1,0 +1,18 @@
+{
+    "packageName":  "com.eclipsia.castle",
+    "name":  "Castle",
+    "version":  1,
+    "baseUrl":  "https://example.com",
+    "description":  "Sharp movies and series in one place.",
+    "authors":  [
+                    "Eclipsia"
+                ],
+    "languages":  [
+                      "en",
+                      "hi"
+                  ],
+    "categories":  [
+                       "Movies",
+                       "Series"
+                   ]
+}
