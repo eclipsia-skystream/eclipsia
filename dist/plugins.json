@@ -1,5 +1,24 @@
 [
   {
+    "packageName": "com.eclipsia.castle",
+    "name": "Castle",
+    "version": 1,
+    "baseUrl": "https://example.com",
+    "description": "Sharp movies and series in one place.",
+    "authors": [
+      "Eclipsia"
+    ],
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "categories": [
+      "Movies",
+      "Series"
+    ],
+    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/dev/dist/com.eclipsia.castle.sky"
+  },
+  {
     "packageName": "com.eclipsia.repo.netmirror",
     "name": "NetMirror",
     "version": 11,
@@ -48,7 +67,7 @@
       "Series",
       "Anime"
     ],
-    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/com.eclipsia.repo.netmirror.sky"
+    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/dev/dist/com.eclipsia.repo.netmirror.sky"
   },
   {
     "packageName": "com.eclipsia.repo.vegamovies",
@@ -69,6 +88,6 @@
       "Series",
       "Anime"
     ],
-    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/main/dist/com.eclipsia.repo.vegamovies.sky"
+    "url": "https://raw.githubusercontent.com/eclipsia-skystream/eclipsia/dev/dist/com.eclipsia.repo.vegamovies.sky"
   }
 ]
