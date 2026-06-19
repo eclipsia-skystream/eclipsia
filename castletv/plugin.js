@@ -1,6 +1,6 @@
 (function() {
     var DEFAULT_API_BASE = "https://api.hlowb.com";
-    var PACKAGE_NAME = "com.external.castle";
+    var PACKAGE_NAME = "com.eclipsia.castle";
     var CHANNEL = "IndiaA";
     var CLIENT_TYPE = "1";
     var LANG = "en-US";
